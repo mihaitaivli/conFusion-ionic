@@ -12,6 +12,7 @@ angular.module('conFusion.controllers', [])
     // Form data for the login modal
     $scope.loginData = {};
     $scope.reservation = {};
+    $scope.commentData = {};
 
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -66,6 +67,34 @@ angular.module('conFusion.controllers', [])
       // code if using a server system
       $timeout(function () {
         $scope.closeReserve();
+      }, 1000);
+    };
+
+    // Create the comment modal that we will use later
+    $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
+      scope: $scope
+    }).then(function (modal) {
+      $scope.modal = modal;
+    });
+
+    // Triggered in the close modal to close it
+    $scope.closeComment = function () {
+      $scope.modal.hide();
+    };
+
+    // Open the comment modal
+    $scope.comment = function () {
+      $scope.modal.show();
+    };
+
+    // Perform the comment action when the user submits the comment form
+    $scope.doComment = function () {
+      console.log('Doing commenting', $scope.commentData);
+
+      // Simulate a reservation delay. Remove this and replace with your reservation
+      // code if using a server system
+      $timeout(function () {
+        $scope.closeComment();
       }, 1000);
     };
 
@@ -249,6 +278,10 @@ angular.module('conFusion.controllers', [])
         favoriteFactory.addToFavorites(index);
         $scope.popover.hide();
       }
+
+      // $scope.addComment = function () {
+      //   $scope.popover.hide();
+      // }
 
   }])
 
