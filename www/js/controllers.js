@@ -122,6 +122,35 @@ angular.module('conFusion.controllers', [])
 
   }])
 
+  .controller('FavoritesController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function ($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate) {
+
+    $scope.baseURL = baseURL;
+    $scope.shouldShowDelete = false;
+
+    $scope.favorites = favoriteFactory.getFavorites();
+
+    $scope.dishes = menuFactory.getDishes().query(
+      function (response) {
+        $scope.dishes = response;
+      },
+      function (response) {
+        $scope.message = "Error: " + response.status + " " + response.statusText;
+      });
+    console.log($scope.dishes, $scope.favorites);
+
+    $scope.toggleDelete = function () {
+      $scope.shouldShowDelete = !$scope.shouldShowDelete;
+      console.log($scope.shouldShowDelete);
+    }
+
+    $scope.deleteFavorite = function (index) {
+
+      favoriteFactory.deleteFromFavorites(index);
+      $scope.shouldShowDelete = false;
+
+    }}])
+
+
   .controller('ContactController', ['$scope', function($scope) {
 
     $scope.feedback = {mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
@@ -219,4 +248,20 @@ angular.module('conFusion.controllers', [])
     $scope.leaders = corporateFactory.query();
     console.log($scope.leaders);
 
-  }]);
+  }])
+
+  .filter('favoriteFilter', function () {
+    return function (dishes, favorites) {
+      var out = [];
+      for (var i = 0; i < favorites.length; i++) {
+        for (var j = 0; j < dishes.length; j++) {
+          if (dishes[j].id === favorites[i].id)
+            out.push(dishes[j]);
+        }
+      }
+      return out;
+
+    }})
+
+;
+
