@@ -85,14 +85,15 @@ angular.module('conFusion.controllers', [])
     // Open the comment modal
     $scope.comment = function () {
       $scope.modal.show();
+      $scope.$on('popover.hidden', function() {
+        $scope.popover.hide();
+      });
     };
 
     // Perform the comment action when the user submits the comment form
     $scope.doComment = function () {
-      console.log('Doing commenting', $scope.commentData);
-
-      // Simulate a reservation delay. Remove this and replace with your reservation
-      // code if using a server system
+      console.log('Commenting...', $scope.commentData);
+      // Simulate a server delay.
       $timeout(function () {
         $scope.closeComment();
       }, 1000);
@@ -277,11 +278,11 @@ angular.module('conFusion.controllers', [])
         console.log("index is " + index);
         favoriteFactory.addToFavorites(index);
         $scope.popover.hide();
-      }
+      };
 
-      // $scope.addComment = function () {
-      //   $scope.popover.hide();
-      // }
+      $scope.closePopover = function () {
+        $scope.popover.hide();
+      }
 
   }])
 

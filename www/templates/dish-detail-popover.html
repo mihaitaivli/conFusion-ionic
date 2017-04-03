@@ -1,6 +1,6 @@
 <ion-popover-view>
   <ion-content>
     <ion-item ng-click="addFavorite({{dish.id}})">Add to Favorites</ion-item>
-    <ion-item ng-click="comment()">Add Comment</ion-item>
+    <ion-item ng-click="closePopover();comment()">Add Comment</ion-item>
   </ion-content>
 </ion-popover-view>
