@@ -245,6 +245,12 @@ angular.module('conFusion.controllers', [])
         $scope.dish.comments.push($scope.commentData);
         menuFactory.getDishes().update({id: $scope.dish.id}, $scope.dish);
 
+        // TODO reset the form / destroy the modal
+        // $scope.$on('$destroy', function() {
+        //   $scope.modal.remove();
+        // });
+
+
         //close the comment modal
         $scope.closeComment();
 
@@ -284,11 +290,9 @@ angular.module('conFusion.controllers', [])
       // Open the comment modal
       $scope.comment = function () {
         $scope.modal.show();
-        // $scope.$on('popover.hidden', function() {
-        //   $scope.popover.hide();
-        // });
       };
 
+      // Close the comment modal
       $scope.closePopover = function () {
         $scope.popover.hide();
       }
