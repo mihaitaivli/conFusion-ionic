@@ -12,7 +12,6 @@ angular.module('conFusion.controllers', [])
     // Form data for the login modal
     $scope.loginData = {};
     $scope.reservation = {};
-    $scope.commentData = {};
 
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -69,36 +68,6 @@ angular.module('conFusion.controllers', [])
         $scope.closeReserve();
       }, 1000);
     };
-
-    // Create the comment modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
-      scope: $scope
-    }).then(function (modal) {
-      $scope.modal = modal;
-    });
-
-    // Triggered in the close modal to close it
-    $scope.closeComment = function () {
-      $scope.modal.hide();
-    };
-
-    // Open the comment modal
-    $scope.comment = function () {
-      $scope.modal.show();
-      $scope.$on('popover.hidden', function() {
-        $scope.popover.hide();
-      });
-    };
-
-    // Perform the comment action when the user submits the comment form
-    $scope.doComment = function () {
-      console.log('Commenting...', $scope.commentData);
-      // Simulate a server delay.
-      $timeout(function () {
-        $scope.closeComment();
-      }, 1000);
-    };
-
   })
 
   .controller('MenuController', ['$scope', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicListDelegate', function ($scope, menuFactory, favoriteFactory, baseURL, $ionicListDelegate) {
@@ -243,33 +212,65 @@ angular.module('conFusion.controllers', [])
     };
   }])
 
-  .controller('DishDetailController', ['$scope', '$stateParams', 'menuFactory', 'favoriteFactory', 'baseURL','$ionicPopover',
-    function ($scope, $stateParams, menuFactory, favoriteFactory, baseURL, $ionicPopover) {
-    $scope.baseURL = baseURL;
-    $scope.dish = {};
-    $scope.showDish = false;
-    $scope.message = "Loading ...";
-    // $scope.addFavorite = favoriteFactory.addFavorite;
+  .controller('DishDetailController',
+    ['$scope', '$stateParams', 'menuFactory', 'favoriteFactory', 'baseURL', '$ionicPopover', '$ionicModal',
+    function ($scope, $stateParams, menuFactory, favoriteFactory, baseURL, $ionicPopover, $ionicModal) {
+      $scope.baseURL = baseURL;
+      $scope.dish = {};
+      $scope.showDish = false;
+      $scope.message = "Loading ...";
+      $scope.commentData = {};
 
-    $scope.dish = menuFactory.getDishes().get({id: parseInt($stateParams.id, 10)})
-      .$promise.then(
-        function (response) {
-          $scope.dish = response;
-          $scope.showDish = true;
-        },
-        function (response) {
-          $scope.message = "Error: " + response.status + " " + response.statusText;
-        }
-      );
+
+      // Create the comment modal that we will use later
+      $ionicModal.fromTemplateUrl('templates/dish-comment.html', {
+        scope: $scope
+      }).then(function (modal) {
+        $scope.modal = modal;
+      });
+
+      // Triggered in the close modal to close it
+      $scope.closeComment = function () {
+        $scope.modal.hide();
+      };
+
+
+      // Perform the comment action when the user submits the comment form
+      $scope.doComment = function () {
+
+        $scope.commentData.date = new Date().toISOString();
+
+        console.log($scope.commentData);
+        //
+        $scope.dish.comments.push($scope.commentData);
+        menuFactory.getDishes().update({id: $scope.dish.id}, $scope.dish);
+
+        //close the comment modal
+        $scope.closeComment();
+
+      };
+
+
+
+      $scope.dish = menuFactory.getDishes().get({id: parseInt($stateParams.id, 10)})
+        .$promise.then(
+          function (response) {
+            $scope.dish = response;
+            $scope.showDish = true;
+          },
+          function (response) {
+            $scope.message = "Error: " + response.status + " " + response.statusText;
+          }
+        );
 
       // .fromTemplateUrl() method
       $ionicPopover.fromTemplateUrl('templates/dish-detail-popover.html', {
         scope: $scope
-      }).then(function(popover) {
+      }).then(function (popover) {
         $scope.popover = popover;
       });
 
-      $scope.showPopover = function($event) {
+      $scope.showPopover = function ($event) {
         $scope.popover.show($event);
       };
 
@@ -280,11 +281,19 @@ angular.module('conFusion.controllers', [])
         $scope.popover.hide();
       };
 
+      // Open the comment modal
+      $scope.comment = function () {
+        $scope.modal.show();
+        // $scope.$on('popover.hidden', function() {
+        //   $scope.popover.hide();
+        // });
+      };
+
       $scope.closePopover = function () {
         $scope.popover.hide();
       }
 
-  }])
+    }])
 
   .controller('DishCommentController', ['$scope', 'menuFactory', function ($scope, menuFactory) {
 
