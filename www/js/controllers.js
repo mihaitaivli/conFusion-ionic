@@ -162,7 +162,6 @@ angular.module('conFusion.controllers', [])
 
         }
 
-
       }])
 
 
